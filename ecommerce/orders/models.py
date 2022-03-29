@@ -7,6 +7,8 @@ class Order(models.Model):
 
 
 class OrderDetail(models.Model):
-    order = models.ForeignKey("orders.Order", on_delete=models.PROTECT)
+    order = models.ForeignKey(
+        "orders.Order", on_delete=models.PROTECT, related_name="items"
+    )
     product = models.ForeignKey("products.Product", on_delete=models.PROTECT)
     quantity = models.IntegerField()

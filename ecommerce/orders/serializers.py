@@ -17,3 +17,11 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Order
         fields = "__all__"
+
+
+class OrderUpdateSerializer(serializers.ModelSerializer):
+    items = OrderDetailSerializer(many=True, allow_empty=False)
+
+    class Meta:
+        model = models.Order
+        exclude = ["id"]

@@ -77,6 +77,7 @@ def order_details_update(order: models.Order, items: List[Item]):
 
 
 def drop_deleted_items(order: models.Order, items: List[Item]):
+    # TODO: maybe should be handled by a signal?
     products = [item.product for item in items]
     deleted_items = order.items.select_related("product").exclude(product__in=products)
 

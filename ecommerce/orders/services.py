@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from products.services import stock_update
 
-from . import models, selectors
+from . import models, selectors, serializers
 from .utils import Item, check_unique_products
 
 
@@ -41,7 +41,7 @@ def order_update(*, items: List[OrderedDict], order: str) -> Optional[models.Ord
     Validates and updates an order. If the order is invalid,
     raises ValidationError.
 
-    :param: id: The order id.
+    :param: order: The order id.
     :param: items: A list of items.
     """
     items = [Item(**item) for item in items]
@@ -82,5 +82,29 @@ def drop_deleted_items(order: models.Order, items: List[Item]):
     deleted_items = order.items.select_related("product").exclude(product__in=products)
 
     for item in deleted_items:
+        stock_update(item.product, item.quantity)
+        item.delete()
+
+
+def order_delete(*, order: str) -> Optional[OrderedDict]:
+    """
+    Deletes an order and its details. Also restores
+    the stock of the products.
+
+    :param: order: The order id.
+    """
+    order = selectors.order_get(order)
+    order_data = serializers.OrderSerializer(order).data
+
+    with transaction.atomic():
+        order_details_delete(order)
+        order.delete()
+    return order_data
+
+
+def order_details_delete(order: models.Order):
+    order_items = order.items.select_related("product").all()
+
+    for item in order_items:
         stock_update(item.product, item.quantity)
         item.delete()

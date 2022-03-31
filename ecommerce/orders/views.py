@@ -27,7 +27,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = serializers.OrderUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = order_update(**serializer.validated_data, order=pk)
-        return Response(self.get_serializer(order).data, 201)
+        return Response(self.get_serializer(order).data, 200)
 
     def destroy(self, request, pk):
         order = order_delete(order=pk)

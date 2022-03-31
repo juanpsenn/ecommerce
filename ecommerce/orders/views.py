@@ -2,6 +2,7 @@ from rest_framework import permissions, viewsets
 from rest_framework.response import Response
 
 from . import models, serializers
+from .selectors import order_get
 from .services import order_create, order_delete, order_update
 
 
@@ -9,6 +10,12 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = models.Order.objects.all()
     serializer_class = serializers.OrderSerializer
     permission_classes = [permissions.AllowAny]
+
+    def retrieve(self, request, pk):
+        order = order_get(pk)
+        return Response(
+            self.get_serializer(order, context=request.query_params).data, 200
+        )
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)

@@ -1,7 +1,11 @@
 from dataclasses import dataclass
-from typing import List
+from decimal import Decimal
+from typing import List, Optional
 
+import requests
 from products.models import Product
+
+USD_API = "https://www.dolarsi.com/api/api.php?type=valoresprincipales"
 
 
 @dataclass
@@ -16,3 +20,14 @@ def check_unique_products(items: List[dict]) -> bool:
     """
     products = [i.product for i in items]
     return len(products) == len(set(products))
+
+
+def get_usd_quote(name: str = "Dolar Blue") -> Optional[float]:
+    """
+    Get the USD quote from the API.
+    """
+    response = requests.get(USD_API)
+    for usd in response.json():
+        if usd["casa"]["nombre"] == name:
+            return Decimal(usd["casa"]["venta"].replace(",", "."))
+    raise ValueError(f"Cannot find {name} in the response.")

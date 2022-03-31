@@ -17,3 +17,5 @@ jobs:
           pip3 install pytest-django pytest factory-boy
       - name: Running tests
         run: pytest ecommerce/
+        env:
+          DATABASE_URL: sqlite:///ecommerce.sqlite3

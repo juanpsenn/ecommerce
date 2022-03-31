@@ -11,7 +11,7 @@ def stock_update(
     product: Union[models.Product, str],
     quantity: int = 0,
     validate: bool = True,
-    replace: bool = True,
+    replace: bool = False,
 ):
     """
     Update the stock of a product if has enought stock.

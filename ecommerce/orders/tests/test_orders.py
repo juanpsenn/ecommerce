@@ -40,6 +40,30 @@ def test_post_order(api_client):
     assert product.stock == 9
 
 
+def test_post_order_without_stock(api_client):
+    product = ProductFactory(id="abc", stock=0)
+    body = {"id": "some-random-id", "items": [{"product": "abc", "quantity": 1}]}
+
+    response = api_client.post("/orders/", data=body, format="json")
+
+    product.refresh_from_db()
+
+    assert response.status_code == 400
+    assert product.stock == 0
+
+
+def test_post_order_with_zero_quantity(api_client):
+    product = ProductFactory(id="abc", stock=10)
+    body = {"id": "some-random-id", "items": [{"product": "abc", "quantity": 0}]}
+
+    response = api_client.post("/orders/", data=body, format="json")
+
+    product.refresh_from_db()
+
+    assert response.status_code == 400
+    assert product.stock == 10
+
+
 def test_post_order_with_invalid_product(api_client):
     body = {"id": "some-random-id", "items": [{"product": "abc", "quantity": 1}]}
 

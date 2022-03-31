@@ -7,3 +7,9 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Product
         fields = "__all__"
+
+
+class ProductUpdateStockSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Product
+        fields = ["stock"]

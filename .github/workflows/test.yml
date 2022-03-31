@@ -14,6 +14,6 @@ jobs:
           apt-get update -qy
           apt-get install -y python3-dev python3-pip
           pip3 install -r requirements.txt
-          pip3 install pytest-django pytest
+          pip3 install pytest-django pytest factory-boy
       - name: Running tests
         run: pytest ecommerce/
